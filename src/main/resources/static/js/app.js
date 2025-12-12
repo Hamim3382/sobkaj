@@ -80,24 +80,18 @@ function updateNavForLoggedOutUser() {
 
 // ===== Load Workers =====
 async function loadWorkers() {
-    // Only load workers if on a page with workers grid
-    if (!workersGrid) return;
-
     try {
-        if (loading) loading.style.display = 'block';
-        if (noWorkers) noWorkers.style.display = 'none';
-        workersGrid.innerHTML = '';
-
+        // Fetch workers for stats (works on any page)
         const response = await fetch(`${API_BASE}/workers`);
         allWorkers = await response.json();
 
-        // Update stats (only on homepage)
+        // Update stats (on homepage)
         const workerCountEl = document.getElementById('worker-count');
         if (workerCountEl) {
             workerCountEl.textContent = allWorkers.length;
         }
 
-        // Count reviews (only on homepage)
+        // Count reviews (on homepage)
         const reviewCountEl = document.getElementById('review-count');
         if (reviewCountEl) {
             let reviewCount = 0;
@@ -114,6 +108,13 @@ async function loadWorkers() {
             }
             reviewCountEl.textContent = reviewCount;
         }
+
+        // Only render workers grid if on a page with workers grid
+        if (!workersGrid) return;
+
+        if (loading) loading.style.display = 'block';
+        if (noWorkers) noWorkers.style.display = 'none';
+        workersGrid.innerHTML = '';
 
         if (loading) loading.style.display = 'none';
         filterAndRenderWorkers();
