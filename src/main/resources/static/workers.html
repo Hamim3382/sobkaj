@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Workers - ShobKaj</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon-wrapper">
+                    <span class="logo-icon">🛠️</span>
+                </div>
+                <div class="logo-text-wrapper">
+                    <span class="logo-text">ShobKaj</span>
+                    <span class="logo-tagline">সব কাজ</span>
+                </div>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/workers.html" class="nav-link active">Find Workers</a>
+                <a href="/#about" class="nav-link">About</a>
+            </div>
+            <div class="nav-auth" id="nav-auth">
+                <!-- Will be updated by JS based on login state -->
+                <button class="btn btn-outline" onclick="openAuthModal('login')">Log In</button>
+                <button class="btn btn-primary" onclick="openAuthModal('signup')">Sign Up</button>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">Find Skilled Workers</h1>
+            <p class="page-subtitle">Browse verified professionals ready to help you with any task</p>
+        </div>
+    </section>
+
+    <!-- Workers Section -->
+    <section class="workers-section workers-page">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Available Workers</h2>
+                    <p class="section-subtitle">Skilled professionals ready to help you</p>
+                </div>
+                <div class="filter-dropdown">
+                    <select id="skill-filter" onchange="filterWorkers()">
+                        <option value="all">All Categories</option>
+                        <option value="PLUMBER">🔧 Plumber</option>
+                        <option value="ELECTRICIAN">⚡ Electrician</option>
+                        <option value="MAID">🧹 Maid</option>
+                        <option value="BABYSITTER">👶 Babysitter</option>
+                        <option value="COOK">👨‍🍳 Cook</option>
+                        <option value="DRIVER">🚗 Driver</option>
+                        <option value="CARPENTER">🪚 Carpenter</option>
+                        <option value="PAINTER">🎨 Painter</option>
+                    </select>
+                </div>
+            </div>
+            <div class="workers-grid" id="workers-grid">
+                <!-- Workers will be loaded here -->
+            </div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Loading workers...</p>
+            </div>
+            <div class="no-workers" id="no-workers" style="display: none;">
+                <div class="empty-state">
+                    <span class="empty-icon">🔍</span>
+                    <h3>No workers found</h3>
+                    <p>Try a different category or check back later</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-card">
+                <div class="cta-content">
+                    <h2>Are You a Skilled Worker?</h2>
+                    <p>Join thousands of workers earning through ShobKaj. Create your profile and start getting
+                        customers today!</p>
+                    <button class="btn btn-white btn-lg" onclick="openAuthModal('signup-worker')">
+                        <span class="btn-icon">🚀</span>
+                        Join as Worker - It's Free
+                    </button>
+                </div>
+                <div class="cta-features">
+                    <div class="cta-feature">
+                        <span class="check-icon">✓</span>
+                        <span>No registration fee</span>
+                    </div>
+                    <div class="cta-feature">
+                        <span class="check-icon">✓</span>
+                        <span>Set your own rates</span>
+                    </div>
+                    <div class="cta-feature">
+                        <span class="check-icon">✓</span>
+                        <span>Work on your schedule</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <span class="logo-icon">🛠️</span>
+                        <span class="logo-text">ShobKaj</span>
+                    </div>
+                    <p>Bangladesh's trusted marketplace for finding skilled workers and quality services.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">📘</a>
+                        <a href="#" class="social-link">📷</a>
+                        <a href="#" class="social-link">🐦</a>
+                    </div>
+                </div>
+                <div class="footer-links-group">
+                    <h4>For Customers</h4>
+                    <a href="#">How it works</a>
+                    <a href="/workers.html">Find workers</a>
+                    <a href="#">Safety tips</a>
+                </div>
+                <div class="footer-links-group">
+                    <h4>For Workers</h4>
+                    <a href="#">Join as worker</a>
+                    <a href="#">Worker guide</a>
+                    <a href="#">Success stories</a>
+                </div>
+                <div class="footer-links-group">
+                    <h4>Support</h4>
+                    <a href="#">Help center</a>
+                    <a href="#">Contact us</a>
+                    <a href="#">Terms of service</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 ShobKaj. Made with ❤️ in Bangladesh 🇧🇩</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-overlay" onclick="closeAuthModal()"></div>
+        <div class="modal-content auth-modal-content">
+            <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+
+            <!-- Login Form -->
+            <div class="auth-form" id="login-form">
+                <div class="modal-body">
+                    <div class="auth-header">
+                        <div class="auth-icon">👋</div>
+                        <h2>Welcome Back!</h2>
+                        <p>Log in to your ShobKaj account</p>
+                    </div>
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <div class="input-with-icon">
+                                <span class="input-icon">👤</span>
+                                <input type="text" id="login-username" class="form-input"
+                                    placeholder="Enter your username" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="input-with-icon">
+                                <span class="input-icon">🔒</span>
+                                <input type="password" id="login-password" class="form-input"
+                                    placeholder="Enter your password" required>
+                            </div>
+                        </div>
+                        <div class="form-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="remember-me">
+                                <span>Remember me</span>
+                            </label>
+                            <a href="#" class="forgot-password">Forgot Password?</a>
+                        </div>
+                        <button type="submit" class="auth-submit-btn">Log In</button>
+                    </form>
+                </div>
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="#" onclick="switchAuthForm('signup'); return false;">Sign up</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="auth-form" id="signup-form" style="display: none;">
+                <div class="modal-body">
+                    <div class="auth-header">
+                        <div class="auth-icon">🎉</div>
+                        <h2>Create Account</h2>
+                        <p>Join ShobKaj today</p>
+                    </div>
+                    <form onsubmit="handleSignup(event)">
+                        <!-- Modern Role Toggle -->
+                        <div class="role-toggle-container">
+                            <button type="button" class="role-toggle-btn active" data-role="CUSTOMER"
+                                onclick="selectRole('CUSTOMER')">
+                                <span class="role-toggle-icon">🏠</span>
+                                <span>Customer</span>
+                            </button>
+                            <button type="button" class="role-toggle-btn" data-role="WORKER"
+                                onclick="selectRole('WORKER')">
+                                <span class="role-toggle-icon">💼</span>
+                                <span>Worker</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="signup-role" value="CUSTOMER">
+
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input type="text" id="signup-username" class="form-input" placeholder="Choose a username"
+                                required minlength="3">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="signup-email" class="form-input" placeholder="your@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" id="signup-password" class="form-input"
+                                placeholder="Create a strong password" required minlength="6">
+                        </div>
+
+                        <!-- Worker-specific fields -->
+                        <div id="worker-fields" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Your Skill Category</label>
+                                <select id="signup-skill" class="form-input">
+                                    <option value="PLUMBER">🔧 Plumber</option>
+                                    <option value="ELECTRICIAN">⚡ Electrician</option>
+                                    <option value="MAID">🧹 Maid / Cleaner</option>
+                                    <option value="BABYSITTER">👶 Babysitter</option>
+                                    <option value="COOK">👨‍🍳 Cook / Chef</option>
+                                    <option value="DRIVER">🚗 Driver</option>
+                                    <option value="CARPENTER">🪚 Carpenter</option>
+                                    <option value="PAINTER">🎨 Painter</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Hourly Rate (৳)</label>
+                                <input type="number" id="signup-rate" class="form-input" placeholder="e.g. 300" min="50"
+                                    value="200">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">About You</label>
+                                <textarea id="signup-description" class="form-input"
+                                    placeholder="Tell customers about your experience, skills, and what makes you great at your job..."
+                                    rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="auth-submit-btn">Create Account</button>
+                    </form>
+                </div>
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="#" onclick="switchAuthForm('login'); return false;">Log in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Worker Detail Modal -->
+    <div class="modal" id="worker-modal">
+        <div class="modal-overlay" onclick="closeWorkerModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeWorkerModal()">&times;</button>
+            <div class="modal-body" id="modal-body">
+                <!-- Worker details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal" id="review-modal">
+        <div class="modal-overlay" onclick="closeReviewModal()"></div>
+        <div class="modal-content modal-sm">
+            <button class="modal-close" onclick="closeReviewModal()">&times;</button>
+            <div class="modal-body">
+                <div class="auth-header">
+                    <span class="auth-icon">⭐</span>
+                    <h2>Leave a Review</h2>
+                    <p>Share your experience</p>
+                </div>
+                <form id="review-form" onsubmit="submitReview(event)">
+                    <input type="hidden" id="review-worker-id">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" id="reviewer-name" class="form-input" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <div class="star-rating" id="star-rating">
+                            <span class="star active" data-rating="1">★</span>
+                            <span class="star active" data-rating="2">★</span>
+                            <span class="star active" data-rating="3">★</span>
+                            <span class="star active" data-rating="4">★</span>
+                            <span class="star active" data-rating="5">★</span>
+                        </div>
+                        <input type="hidden" id="review-rating" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label>Your Review</label>
+                        <textarea id="review-comment" class="form-input" placeholder="Tell us about your experience..."
+                            rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toast-icon">✓</span>
+        <span class="toast-message" id="toast-message"></span>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+
+</html>
