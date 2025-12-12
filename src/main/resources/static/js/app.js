@@ -517,7 +517,13 @@ function showToast(message, type = 'success') {
 }
 
 function toggleMobileMenu() {
-    // TODO: Implement mobile menu
+    const navLinks = document.getElementById('nav-links');
+    const navAuth = document.getElementById('nav-auth');
+    const menuBtn = document.querySelector('.mobile-menu-btn');
+    
+    navLinks.classList.toggle('mobile-open');
+    navAuth.classList.toggle('mobile-open');
+    menuBtn.classList.toggle('active');
 }
 
 function toggleUserMenu() {
