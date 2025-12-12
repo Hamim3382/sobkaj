@@ -28,6 +28,12 @@ public class DataInitializer implements CommandLineRunner {
         @Override
         @Transactional
         public void run(String... args) {
+                // Skip if data already exists
+                if (userRepository.count() > 0) {
+                        log.info("Database already initialized, skipping seed data...");
+                        return;
+                }
+
                 log.info("Initializing ShobKaj database with dummy data...");
 
                 // ===== Worker 1: Rahim (Plumber) =====
