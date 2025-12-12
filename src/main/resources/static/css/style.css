@@ -376,9 +376,9 @@ body {
 .hero-content {
     position: relative;
     z-index: 1;
-    max-width: 700px;
-    margin: 0 auto;
-    text-align: center;
+    max-width: 800px;
+    text-align: left;
+    padding-left: 3rem;
 }
 
 .hero-badge {
@@ -433,7 +433,7 @@ body {
     margin-bottom: 3rem;
     animation: fadeInUp 0.5s ease 0.3s forwards;
     opacity: 0;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .hero-stats {
@@ -442,7 +442,7 @@ body {
     gap: 1rem;
     animation: fadeInUp 0.5s ease 0.4s forwards;
     opacity: 0;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .stat-card {
