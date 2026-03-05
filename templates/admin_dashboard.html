@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — Sobkaj{% endblock %}
+
+{% block content %}
+
+<!-- ── Page Header ─────────────────────────────────────────── -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h2 class="fw-bold mb-1" style="background: linear-gradient(90deg, #7f5af0, #2cb67d);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            <i class="bi bi-speedometer2 me-2" style="-webkit-text-fill-color:#7f5af0;"></i>
+            Admin Analytics Dashboard
+        </h2>
+        <p class="text-muted mb-0" style="color:rgba(255,255,255,.55) !important;">
+            Platform-wide reports &amp; key performance indicators
+        </p>
+    </div>
+    <span class="badge rounded-pill px-3 py-2"
+          style="background:rgba(127,90,240,.25); color:#a78bfa; font-size:.85rem; border:1px solid rgba(127,90,240,.4);">
+        <i class="bi bi-shield-lock-fill me-1"></i>Admin Access
+    </span>
+</div>
+
+<!-- ── KPI Summary Cards ───────────────────────────────────── -->
+<div class="row g-3 mb-4">
+
+    <!-- Total Users -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card-glass rounded-4 p-4 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center"
+                     style="width:52px;height:52px;background:rgba(127,90,240,.2);">
+                    <i class="bi bi-people-fill fs-4" style="color:#7f5af0;"></i>
+                </div>
+                <div>
+                    <div class="text-muted small" style="color:rgba(255,255,255,.5) !important;">Total Users</div>
+                    <div class="fw-bold fs-4">{{ user_stats.total_users or 0 }}</div>
+                    <div class="small" style="color:rgba(255,255,255,.45);">
+                        {{ user_stats.total_customers or 0 }} customers &middot;
+                        {{ user_stats.total_workers   or 0 }} workers
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Revenue -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card-glass rounded-4 p-4 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center"
+                     style="width:52px;height:52px;background:rgba(44,182,125,.2);">
+                    <i class="bi bi-currency-exchange fs-4" style="color:#2cb67d;"></i>
+                </div>
+                <div>
+                    <div class="text-muted small" style="color:rgba(255,255,255,.5) !important;">Total Revenue</div>
+                    <div class="fw-bold fs-4">&#2547;{{ "%.2f"|format(revenue_stats.total_revenue|float) }}</div>
+                    <div class="small" style="color:rgba(255,255,255,.45);">
+                        from {{ revenue_stats.total_completed_bookings or 0 }} completed bookings
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earned Commission -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card-glass rounded-4 p-4 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center"
+                     style="width:52px;height:52px;background:rgba(251,197,49,.2);">
+                    <i class="bi bi-bank2 fs-4" style="color:#fbc531;"></i>
+                </div>
+                <div>
+                    <div class="text-muted small" style="color:rgba(255,255,255,.5) !important;">Earned Commission</div>
+                    <div class="fw-bold fs-4">&#2547;{{ "%.2f"|format(commission_totals.earned_commission|float) }}</div>
+                    <div class="small" style="color:rgba(255,255,255,.45);">
+                        &#2547;{{ "%.2f"|format(commission_totals.pending_commission|float) }} still pending
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avg Booking Value -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card-glass rounded-4 p-4 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center"
+                     style="width:52px;height:52px;background:rgba(240,71,71,.2);">
+                    <i class="bi bi-graph-up-arrow fs-4" style="color:#e84393;"></i>
+                </div>
+                <div>
+                    <div class="text-muted small" style="color:rgba(255,255,255,.5) !important;">Avg Booking Value</div>
+                    <div class="fw-bold fs-4">&#2547;{{ "%.2f"|format(revenue_stats.avg_booking_value|float) }}</div>
+                    <div class="small" style="color:rgba(255,255,255,.45);">
+                        Max: &#2547;{{ "%.2f"|format(revenue_stats.max_booking_value|float) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /KPI row -->
+
+<!-- ── Top Workers ─────────────────────────────────────────── -->
+<div class="card-glass rounded-4 p-4 mb-4">
+    <h5 class="fw-semibold mb-3">
+        <i class="bi bi-trophy-fill me-2" style="color:#fbc531;"></i>Top Workers
+        <small class="fw-normal ms-2" style="color:rgba(255,255,255,.45); font-size:.8rem;">
+            ranked by average rating &amp; completed jobs
+        </small>
+    </h5>
+    <!-- SQL annotation -->
+    <p class="small mb-3" style="color:rgba(255,255,255,.35); font-family:monospace;">
+        GROUP BY worker &nbsp;|&nbsp; AVG(stars) &nbsp;|&nbsp; COUNT(completed bookings) &nbsp;|&nbsp;
+        ORDER BY avg_rating DESC, completed_jobs DESC &nbsp;|&nbsp; LIMIT 10
+    </p>
+
+    <div class="table-responsive">
+        <table class="table table-borderless align-middle mb-0"
+               style="color:#e0e0e0;">
+            <thead>
+                <tr style="border-bottom:1px solid rgba(255,255,255,.1);">
+                    <th class="text-muted small fw-semibold">#</th>
+                    <th class="text-muted small fw-semibold">Worker</th>
+                    <th class="text-muted small fw-semibold">Skills</th>
+                    <th class="text-muted small fw-semibold text-center">Avg&nbsp;Rating</th>
+                    <th class="text-muted small fw-semibold text-center">Reviews</th>
+                    <th class="text-muted small fw-semibold text-center">Completed Jobs</th>
+                    <th class="text-muted small fw-semibold text-end">Hourly Rate</th>
+                    <th class="text-muted small fw-semibold text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if top_workers %}
+                    {% for w in top_workers %}
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+                        <td class="fw-bold" style="color:rgba(255,255,255,.4);">{{ loop.index }}</td>
+
+                        <!-- Worker name + phone -->
+                        <td>
+                            <div class="fw-semibold">{{ w.full_name }}</div>
+                            {% if w.phone %}
+                            <div class="small" style="color:rgba(255,255,255,.4);">{{ w.phone }}</div>
+                            {% endif %}
+                        </td>
+
+                        <!-- Skills -->
+                        <td>
+                            <span class="small" style="color:rgba(255,255,255,.55);">
+                                {{ w.skills_list or '—' }}
+                            </span>
+                        </td>
+
+                        <!-- Average Rating -->
+                        <td class="text-center">
+                            {% if w.avg_rating %}
+                                {% set stars = w.avg_rating|float %}
+                                <span class="fw-bold" style="color:#fbc531;">
+                                    <i class="bi bi-star-fill me-1"></i>{{ "%.1f"|format(stars) }}
+                                </span>
+                            {% else %}
+                                <span style="color:rgba(255,255,255,.3);">—</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Review count -->
+                        <td class="text-center">
+                            <span class="badge rounded-pill"
+                                  style="background:rgba(127,90,240,.2); color:#a78bfa;">
+                                {{ w.total_reviews or 0 }}
+                            </span>
+                        </td>
+
+                        <!-- Completed jobs -->
+                        <td class="text-center">
+                            <span class="badge rounded-pill"
+                                  style="background:rgba(44,182,125,.2); color:#2cb67d;">
+                                {{ w.completed_jobs or 0 }}
+                            </span>
+                        </td>
+
+                        <!-- Hourly rate -->
+                        <td class="text-end fw-semibold" style="color:#2cb67d;">
+                            &#2547;{{ "%.2f"|format(w.hourly_rate|float) }}
+                        </td>
+
+                        <!-- Availability -->
+                        <td class="text-center">
+                            {% if w.availability_status == 'available' %}
+                                <span class="badge rounded-pill bg-success bg-opacity-25 text-success">available</span>
+                            {% elif w.availability_status == 'busy' %}
+                                <span class="badge rounded-pill bg-warning bg-opacity-25 text-warning">busy</span>
+                            {% else %}
+                                <span class="badge rounded-pill bg-secondary bg-opacity-25 text-secondary">offline</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4" style="color:rgba(255,255,255,.35);">
+                            No worker data available yet.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div><!-- /Top Workers -->
+
+<!-- ── Revenue + Commission side-by-side ───────────────────── -->
+<div class="row g-3 mb-4">
+
+    <!-- Revenue Breakdown -->
+    <div class="col-12 col-lg-5">
+        <div class="card-glass rounded-4 p-4 h-100">
+            <h5 class="fw-semibold mb-3">
+                <i class="bi bi-bar-chart-fill me-2" style="color:#2cb67d;"></i>Revenue Breakdown
+                <small class="fw-normal ms-2" style="color:rgba(255,255,255,.45); font-size:.8rem;">
+                    completed bookings only
+                </small>
+            </h5>
+            <p class="small mb-3" style="color:rgba(255,255,255,.35); font-family:monospace;">
+                SUM(total_amount) &nbsp;|&nbsp; AVG() &nbsp;|&nbsp; MAX() &nbsp;|&nbsp;
+                WHERE status = 'completed'
+            </p>
+
+            <ul class="list-unstyled mb-0">
+                <li class="d-flex justify-content-between align-items-center py-2"
+                    style="border-bottom:1px solid rgba(255,255,255,.07);">
+                    <span style="color:rgba(255,255,255,.6);">
+                        <i class="bi bi-check-circle-fill me-2 text-success"></i>Completed Bookings
+                    </span>
+                    <strong>{{ revenue_stats.total_completed_bookings or 0 }}</strong>
+                </li>
+                <li class="d-flex justify-content-between align-items-center py-2"
+                    style="border-bottom:1px solid rgba(255,255,255,.07);">
+                    <span style="color:rgba(255,255,255,.6);">
+                        <i class="bi bi-currency-rupee me-2" style="color:#2cb67d;"></i>Total Revenue
+                    </span>
+                    <strong style="color:#2cb67d;">
+                        &#2547;{{ "%.2f"|format(revenue_stats.total_revenue|float) }}
+                    </strong>
+                </li>
+                <li class="d-flex justify-content-between align-items-center py-2"
+                    style="border-bottom:1px solid rgba(255,255,255,.07);">
+                    <span style="color:rgba(255,255,255,.6);">
+                        <i class="bi bi-graph-up me-2" style="color:#7f5af0;"></i>Avg Booking Value
+                    </span>
+                    <strong style="color:#7f5af0;">
+                        &#2547;{{ "%.2f"|format(revenue_stats.avg_booking_value|float) }}
+                    </strong>
+                </li>
+                <li class="d-flex justify-content-between align-items-center py-2"
+                    style="border-bottom:1px solid rgba(255,255,255,.07);">
+                    <span style="color:rgba(255,255,255,.6);">
+                        <i class="bi bi-arrow-up-circle me-2" style="color:#fbc531;"></i>Highest Booking
+                    </span>
+                    <strong style="color:#fbc531;">
+                        &#2547;{{ "%.2f"|format(revenue_stats.max_booking_value|float) }}
+                    </strong>
+                </li>
+                <li class="d-flex justify-content-between align-items-center py-2">
+                    <span style="color:rgba(255,255,255,.6);">
+                        <i class="bi bi-arrow-down-circle me-2" style="color:#e0e0e0;"></i>Lowest Booking
+                    </span>
+                    <strong>&#2547;{{ "%.2f"|format(revenue_stats.min_booking_value|float) }}</strong>
+                </li>
+            </ul>
+        </div>
+    </div><!-- /Revenue Breakdown -->
+
+    <!-- Platform Commission Breakdown -->
+    <div class="col-12 col-lg-7">
+        <div class="card-glass rounded-4 p-4 h-100">
+            <h5 class="fw-semibold mb-3">
+                <i class="bi bi-pie-chart-fill me-2" style="color:#fbc531;"></i>Platform Commissions
+                <small class="fw-normal ms-2" style="color:rgba(255,255,255,.45); font-size:.8rem;">
+                    10% commission per booking — by status
+                </small>
+            </h5>
+            <p class="small mb-3" style="color:rgba(255,255,255,.35); font-family:monospace;">
+                SUM(platform_commission) &nbsp;|&nbsp; GROUP BY status &nbsp;|&nbsp;
+                COUNT(booking_id)
+            </p>
+
+            <!-- Commission KPI row -->
+            <div class="row g-2 mb-3">
+                <div class="col-4">
+                    <div class="rounded-3 text-center p-3"
+                         style="background:rgba(44,182,125,.12); border:1px solid rgba(44,182,125,.25);">
+                        <div class="small" style="color:rgba(255,255,255,.5);">Total Commission</div>
+                        <div class="fw-bold" style="color:#2cb67d;">
+                            &#2547;{{ "%.2f"|format(commission_totals.total_commission|float) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="rounded-3 text-center p-3"
+                         style="background:rgba(127,90,240,.12); border:1px solid rgba(127,90,240,.25);">
+                        <div class="small" style="color:rgba(255,255,255,.5);">Earned</div>
+                        <div class="fw-bold" style="color:#a78bfa;">
+                            &#2547;{{ "%.2f"|format(commission_totals.earned_commission|float) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="rounded-3 text-center p-3"
+                         style="background:rgba(251,197,49,.12); border:1px solid rgba(251,197,49,.25);">
+                        <div class="small" style="color:rgba(255,255,255,.5);">Pending</div>
+                        <div class="fw-bold" style="color:#fbc531;">
+                            &#2547;{{ "%.2f"|format(commission_totals.pending_commission|float) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Per-status table -->
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle mb-0" style="color:#e0e0e0;">
+                    <thead>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,.1);">
+                            <th class="text-muted small fw-semibold">Status</th>
+                            <th class="text-muted small fw-semibold text-center">Bookings</th>
+                            <th class="text-muted small fw-semibold text-end">Revenue</th>
+                            <th class="text-muted small fw-semibold text-end">Commission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if commission_by_status %}
+                            {% for row in commission_by_status %}
+                            <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+                                <td>
+                                    {% if row.status == 'completed' %}
+                                        <span class="badge rounded-pill bg-success bg-opacity-25 text-success">completed</span>
+                                    {% elif row.status == 'confirmed' %}
+                                        <span class="badge rounded-pill bg-primary bg-opacity-25 text-primary">confirmed</span>
+                                    {% elif row.status == 'pending' %}
+                                        <span class="badge rounded-pill bg-warning bg-opacity-25 text-warning">pending</span>
+                                    {% else %}
+                                        <span class="badge rounded-pill bg-danger bg-opacity-25 text-danger">cancelled</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center fw-semibold">{{ row.booking_count }}</td>
+                                <td class="text-end" style="color:#2cb67d;">
+                                    &#2547;{{ "%.2f"|format(row.status_revenue|float) }}
+                                </td>
+                                <td class="text-end fw-bold" style="color:#fbc531;">
+                                    &#2547;{{ "%.2f"|format(row.status_commission|float) }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-3"
+                                    style="color:rgba(255,255,255,.35);">No booking data yet.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                    {% if commission_by_status %}
+                    <tfoot>
+                        <tr style="border-top:1px solid rgba(255,255,255,.15);">
+                            <td class="fw-bold small" style="color:rgba(255,255,255,.6);">TOTAL</td>
+                            <td class="text-center fw-bold">
+                                {{ commission_by_status | sum(attribute='booking_count') }}
+                            </td>
+                            <td class="text-end fw-bold" style="color:#2cb67d;">
+                                &#2547;{{ "%.2f"|format(commission_by_status | sum(attribute='status_revenue')|float) }}
+                            </td>
+                            <td class="text-end fw-bold" style="color:#fbc531;">
+                                &#2547;{{ "%.2f"|format(commission_totals.total_commission|float) }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div><!-- /Commission -->
+
+</div><!-- /Revenue + Commission row -->
+
+{% endblock %}
